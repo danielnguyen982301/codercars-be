@@ -35,12 +35,13 @@ carController.getCars = async (req, res, next) => {
   if (!errors.isEmpty()) {
     return sendResponse(res, 400, null, errors.array(), "Validation Error");
   }
-  const allowedQuery = ["page"];
+  const allowedQuery = ["page", "limit"];
 
   try {
     // YOUR CODE HERE
-    let { page, ...filterQuery } = req.query;
+    let { page, limit, ...filterQuery } = req.query;
     page = page || 1;
+    limit = limit || 10;
 
     const filterKeys = Object.keys(filterQuery);
     filterKeys.forEach((key) => {
@@ -50,11 +51,11 @@ carController.getCars = async (req, res, next) => {
       if (!filterQuery[key]) delete filterQuery[key];
     });
 
-    const cars = await Car.find({ isDeleted: false })
-      .limit(10)
-      .skip((page - 1) * 10);
+    const cars = await Car.find({ ...filterQuery, isDeleted: false })
+      .limit(limit)
+      .skip((page - 1) * limit);
     const totalCars = await Car.countDocuments();
-    const totalPages = Math.ceil(totalCars / 10);
+    const totalPages = Math.ceil(totalCars / limit);
     sendResponse(
       res,
       200,

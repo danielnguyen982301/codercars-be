@@ -47,10 +47,17 @@ const getCarsValidations = [
     .toInt()
     .escape()
     .optional(),
+  query("limit")
+    .isInt()
+    .withMessage("Limit must be a number")
+    .trim()
+    .toInt()
+    .escape()
+    .optional(),
 ];
 
 const updateCarValidations = [
-  param("id").notEmpty().withMessage("Car ID is required").trim().escape(),
+  param("id").isMongoId().withMessage("Invalid ID").trim().escape(),
   body("make")
     .notEmpty()
     .trim()
@@ -109,7 +116,7 @@ const updateCarValidations = [
 ];
 
 const deleteCarValidations = [
-  param("id").notEmpty().withMessage("Car ID is required").trim().escape(),
+  param("id").isMongoId().withMessage("Invalid ID").trim().escape(),
 ];
 
 module.exports = {
